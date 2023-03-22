@@ -1,8 +1,8 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
     url: jdbc:mysql://localhost/db_springboot_backend
+    username: root
     password: ''
   jackson:
     time-zone: America/Mexico_City
