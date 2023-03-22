@@ -31,8 +31,6 @@ public class SecurityConfig {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/dev-lmm/auth/**")
-                .permitAll()
                 .requestMatchers(HttpMethod.GET, "api/clientes/{id}")
                 .hasAnyRole("USER", "ADMIN")
                 //.hasAnyRole(roles)
@@ -53,7 +51,11 @@ public class SecurityConfig {
                 .logout()
                 .logoutUrl("/api/dev-lmm/auth/logout")
                 .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
+                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers("/api/dev-lmm/auth/**")
+                .permitAll();
 
         return http.build();
     }
