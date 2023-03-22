@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IRoleDao extends JpaRepository<Role, Long> {
-    @Query(value = "SELECT * FROM roles WHERE r.name = :name", nativeQuery = true)
+    @Query(value = "SELECT r FROM roles WHERE r.name = ?1 r", nativeQuery = true)
     Optional<Role> findByName(String name);
     Optional<Role> findRoleById(Long id);
 
