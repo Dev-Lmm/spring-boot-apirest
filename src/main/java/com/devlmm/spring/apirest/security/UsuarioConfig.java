@@ -1,6 +1,6 @@
 package com.devlmm.spring.apirest.security;
 
-import com.devlmm.spring.apirest.models.dao.IUsuarioDao;
+import com.devlmm.spring.apirest.models.dao.IUserDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class UsuarioConfig {
 
-    private final IUsuarioDao repository;
+    private final IUserDao repository;
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> repository.findByUsername(username)

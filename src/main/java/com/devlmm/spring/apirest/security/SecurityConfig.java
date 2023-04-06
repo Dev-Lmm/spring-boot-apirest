@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -26,14 +27,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
-        //String[] roles = roleService.getAllRolesAsString();
         http
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/auth/authenticate", "/api/auth/register")
                 .permitAll()
-                .requestMatchers("/api/clientes**")
+                .requestMatchers("/api/**")
                 .authenticated()
                 .and()
                 .sessionManagement()
@@ -44,8 +44,8 @@ public class SecurityConfig {
                 .logout()
                 .logoutUrl("/api/auth/logout")
                 .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
-
+                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                ;
         return http.build();
     }
 }

@@ -23,4 +23,4 @@ logging:
       springframework: trace
 
 auth:
-  default-role-set: USER,ADMIN
+  default-user-privileges-set: 5,6

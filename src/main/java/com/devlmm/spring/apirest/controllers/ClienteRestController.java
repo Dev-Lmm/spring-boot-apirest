@@ -1,6 +1,6 @@
 package com.devlmm.spring.apirest.controllers;
 
-import com.devlmm.spring.apirest.models.entity.Cliente;
+import com.devlmm.spring.apirest.models.entity.Client;
 import com.devlmm.spring.apirest.models.entity.Region;
 import com.devlmm.spring.apirest.models.services.IClienteService;
 import com.devlmm.spring.apirest.models.services.IUploadFileService;
@@ -37,37 +37,37 @@ public class ClienteRestController {
     HashMap<String, String> messageMap;
 
     @GetMapping("/clientes")
-    public List<Cliente> index(){
+    public List<Client> index(){
     return clienteService.findAll();
     }
 
     @GetMapping("/clientes/page/{page}")
-    public Page<Cliente> index(@PathVariable Integer page){
+    public Page<Client> index(@PathVariable Integer page){
         return clienteService.findAll(PageRequest.of(page, 5));
     }
 
     @GetMapping("/clientes/{id}")
     public ResponseEntity<?> show(@PathVariable Long id){
-        Cliente cliente;
+        Client client;
         Map<String, Object> response = new HashMap<>();
         try {
-            cliente = clienteService.findById(id);
+            client = clienteService.findById(id);
         }
         catch (DataAccessException e){
             messageMap.put("mensaje", "Error al realizar la consulta en la base  de datos");
             messageMap.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return getResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, null, response, false, messageMap);
         }
-        if (cliente == null){
+        if (client == null){
             messageMap.put("mensaje", "El cliente ID:".concat(id.toString().concat(" no existe en la base de datos!")));
             return getResponseEntity(HttpStatus.NOT_FOUND, null, response, false, messageMap);
         }
-        return new ResponseEntity<>(cliente, HttpStatus.OK);
+        return new ResponseEntity<>(client, HttpStatus.OK);
     }
 
     @PostMapping("/clientes")
-    public ResponseEntity<?> create(@Valid @RequestBody Cliente cliente, BindingResult result){
-        Cliente clienteNew;
+    public ResponseEntity<?> create(@Valid @RequestBody Client client, BindingResult result){
+        Client clientNew;
         Map<String, Object> response = new HashMap<>();
 
         if (result.hasErrors()){
@@ -79,7 +79,7 @@ public class ClienteRestController {
         }
 
         try{
-            clienteNew = clienteService.save(cliente);
+            clientNew = clienteService.save(client);
         }
         catch (DataAccessException e){
             response.put("mensaje", "Error al realizar el insert en la base  de datos");
@@ -87,29 +87,29 @@ public class ClienteRestController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("mensaje", "El cliente ha sido creado con exito!");
-        response.put("cliente", clienteNew);
+        response.put("cliente", clientNew);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PutMapping("/clientes/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable Long id){
-        Cliente clienteActual = clienteService.findById(id);
-        Cliente clienteActualizado;
+    public ResponseEntity<?> update(@Valid @RequestBody Client client, BindingResult result, @PathVariable Long id){
+        Client clientActual = clienteService.findById(id);
+        Client clientActualizado;
         Map<String, Object> response = new HashMap<>();
 
         if (result.hasErrors()){
             return getResponseEntity(HttpStatus.BAD_REQUEST, result, response, true);
         }
 
-        if (clienteActual == null){
+        if (clientActual == null){
            messageMap.put("message", "El cliente ID:".concat(id.toString().concat(" no se puede editar porque existe en la base de datos!")));
             return getResponseEntity(HttpStatus.NOT_FOUND, result, response, false, messageMap);
         }
 
         try {
-            clienteActual.updateTo(cliente);
+            clientActual.updateTo(client);
 
-            clienteActualizado = clienteService.save(clienteActual);
+            clientActualizado = clienteService.save(clientActual);
         } catch (DataAccessException e){
             messageMap.put("mensaje", "Error al acturalizar valores en la base  de datos");
             messageMap.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
@@ -118,7 +118,7 @@ public class ClienteRestController {
         }
 
         response.put("mensaje", "El cliente ha sido actualizado con exito!");
-        response.put("cliente", clienteActualizado);
+        response.put("cliente", clientActualizado);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -145,8 +145,8 @@ public class ClienteRestController {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            Cliente clienteExiste = clienteService.findById(id);
-            String nombreFotoAnt = clienteExiste.getFoto();
+            Client clientExiste = clienteService.findById(id);
+            String nombreFotoAnt = clientExiste.getFoto();
             uploadFileService.eliminar(nombreFotoAnt);
             clienteService.delete(id);
         }
@@ -163,7 +163,7 @@ public class ClienteRestController {
     public  ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
         Map<String, Object> response = new HashMap<>();
 
-        Cliente cliente = clienteService.findById(id);
+        Client client = clienteService.findById(id);
         if (!archivo.isEmpty()){
             String nombreArchivo = null;
             try {
@@ -173,12 +173,12 @@ public class ClienteRestController {
                 response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
                 return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            String nombreFotoAnt = cliente.getFoto();
+            String nombreFotoAnt = client.getFoto();
             uploadFileService.eliminar(nombreFotoAnt);
 
-            cliente.setFoto(nombreArchivo);
-            clienteService.save(cliente);
-            response.put("cliente", cliente);
+            client.setFoto(nombreArchivo);
+            clienteService.save(client);
+            response.put("cliente", client);
             response.put("mensaje", "Foto subida correctamente" + nombreArchivo);
         }
         return new ResponseEntity<>(response, HttpStatus.CREATED);

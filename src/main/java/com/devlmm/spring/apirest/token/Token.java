@@ -1,6 +1,6 @@
 package com.devlmm.spring.apirest.token;
 
-import com.devlmm.spring.apirest.models.entity.Usuario;
+import com.devlmm.spring.apirest.models.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,5 +29,5 @@ public class Token {
 
     @ManyToOne
     @JoinColumn(name = "usuarios_id")
-    public Usuario user;
+    public User user;
 }

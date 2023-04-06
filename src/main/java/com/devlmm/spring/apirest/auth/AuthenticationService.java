@@ -1,7 +1,7 @@
 package com.devlmm.spring.apirest.auth;
 
-import com.devlmm.spring.apirest.models.dao.IUsuarioDao;
-import com.devlmm.spring.apirest.models.entity.Usuario;
+import com.devlmm.spring.apirest.models.dao.IUserDao;
+import com.devlmm.spring.apirest.models.entity.User;
 import com.devlmm.spring.apirest.models.services.JwtService;
 import com.devlmm.spring.apirest.token.TokenType;
 import com.devlmm.spring.apirest.token.Token;
@@ -19,21 +19,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-    private final IUsuarioDao repository;
+    private final IUserDao repository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    private final RoleService roleService;
+    private final PrivilegeService privilegeService;
 
-    @Value("${auth.default-role-set}")
-    private List<String> defaultRoleList;
+    @Value("${auth.default-user-privileges-set}")
+    private List<Long> defaultPrivileges;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        var user = Usuario.builder().username(request.getUsername())
+        var user = User.builder().username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .roles(roleService.getRolesByNames(defaultRoleList.toArray(String[]::new)))
+                .privileges(privilegeService.getPrivilegesByIds(defaultPrivileges))
                 .build();
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -53,7 +53,7 @@ public class AuthenticationService {
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
-    private void saveUserToken(Usuario user, String jwtToken) {
+    private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
@@ -64,7 +64,7 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(Usuario user) {
+    private void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;

@@ -1,7 +1,7 @@
 package com.devlmm.spring.apirest.models.services;
 
-import com.devlmm.spring.apirest.models.dao.IClienteDao;
-import com.devlmm.spring.apirest.models.entity.Cliente;
+import com.devlmm.spring.apirest.models.dao.IClientDao;
+import com.devlmm.spring.apirest.models.entity.Client;
 import com.devlmm.spring.apirest.models.entity.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,29 +14,29 @@ import java.util.List;
 @Service
 public class ClienteServiceImpl implements IClienteService{
     @Autowired
-    private IClienteDao clienteDao;
+    private IClientDao clienteDao;
     @Override
     @Transactional(readOnly = true)
-    public List<Cliente> findAll(){
-        return (List<Cliente>) clienteDao.findAll();
+    public List<Client> findAll(){
+        return (List<Client>) clienteDao.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<Cliente> findAll(Pageable pageable) {
+    public Page<Client> findAll(Pageable pageable) {
         return clienteDao.findAll(pageable);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Cliente findById(Long id) {
+    public Client findById(Long id) {
         return clienteDao.findById(id).orElse(null);
     }
 
     @Override
     @Transactional
-    public Cliente save(Cliente cliente) {
-        return clienteDao.save(cliente);
+    public Client save(Client client) {
+        return clienteDao.save(client);
     }
 
     @Override
