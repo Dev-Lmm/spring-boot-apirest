@@ -12,7 +12,8 @@ public interface IRoleDao extends JpaRepository<Role, Long> {
     @Transactional
     @Query(value = "SELECT r.id, r.name FROM roles r WHERE r.name = ?1", nativeQuery = true)
     Optional<Role> findByName(String name);
+    @Transactional
     Optional<Role> findRoleById(Long id);
-
+    @Transactional
     List<Role> findAll();
 }

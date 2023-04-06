@@ -19,6 +19,10 @@ public class Role implements Serializable {
     @Column(unique = true)
     private String name;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "privilege_role",joinColumns = @JoinColumn(name = "rol_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id"), uniqueConstraints = {@UniqueConstraint(columnNames = {"rol_id", "privilege_id"})})
+    private List<Privilege> privileges;
+
     @ManyToMany(mappedBy = "roles")
     private List<Usuario> usuarios;
 }
